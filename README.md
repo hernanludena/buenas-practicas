@@ -9,6 +9,6 @@
 | [Azure](azure.md) | Servicios Azure, Durable Functions, contenedores y mensajería. |
 | [Frontend, TypeScript y Node](frontend-typescript-node.md) | Frameworks, estado, formularios, API, seguridad y runtime. |
 | [Arquitecturas](arquitecturas.md) | Las siete configuraciones conversadas y criterios de evolución. |
-| [Jakarta Bean Validation](jakarta-validation-grupos.md) | Explicación extensa y ejemplos de grupos de validación. |
+| [Jakarta Bean Validation](jakarta-validation-grupos.md) | Recordatorio tabular de restricciones y grupos de validación. |
 
 Las tablas son recordatorios, no tutoriales ni decisiones automáticas. Antes de implementar, validar requisitos, documentación oficial, seguridad y costo. No guardar contraseñas, tokens, tarjetas ni otros secretos en este repositorio.
