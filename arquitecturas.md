@@ -10,7 +10,7 @@ Siete configuraciones recogidas de nuestras conversaciones. Son alternativas his
 | 4 | Arquitectura B: referencia relacional | Backend relacional atribuido a Kevin/Meniuz; detalles sin verificar | Referencia pendiente de confirmar con su fuente; no se documentó suficiente para copiar el diseño. |
 | 5 | Arquitectura C: DynamoDB real time | API Gateway HTTP → Lambda API → DynamoDB (orden/eventos/idempotencia) → Streams → worker Lambda → AppSync Events | CDC de ítems puede activar publicación; Streams no es una cola durable ilimitada ni reemplazo automático de Outbox SQL. |
 | 6 | Arquitectura D: RDS económico | PostgreSQL RDS pequeño, API/monolito, EventBridge Scheduler, worker | Tamaño pequeño fue referencia, no garantía de Free Tier ni de capacidad; medir costo y rendimiento. |
-| 7 | Arquitectura E: Azure Java modular | Dominios de negocio, PostgreSQL, orquestación Durable Functions o Temporal | Modularizar primero; Azure Durable Functions soporta Java, Temporal es otra opción. Completar mensajería/hosting al concretar requisitos. |
+| 7 | Arquitectura E: Azure Java modular | Identity/Auth, Users, Catalog, Orders, Deliveries; PostgreSQL; Durable Functions o Temporal | Modularizar primero; Durable Functions soporta Java y workflow en código; Temporal es alternativa. Definir hosting y mensajería al concretar requisitos. |
 
 | Variante de despliegue | Recordatorio |
 |---|---|
@@ -19,8 +19,9 @@ Siete configuraciones recogidas de nuestras conversaciones. Son alternativas his
 | Frontend AWS | S3 + CloudFront para control; Amplify Hosting para reducir configuración. Gen 2 backend TypeScript es opcional. |
 | Orquestación | Step Functions, Durable Functions o Temporal mantienen estado del workflow; Kafka/EventBridge son mensajería/eventos, no motores de Saga. |
 | Coreografía | Servicios reaccionan a eventos; usar contratos versionados, outbox/CDC cuando aplique, deduplicación, DLQ y trazabilidad. |
-| Inicio de Delivery Loja | Happy path de restaurantes, carrito y orden; conservar transacción local mientras un backend modular lo resuelva. |
-| Evolución | Separar servicios cuando lo justifiquen escalado, equipos o despliegues independientes; evitar complejidad antes de validarla. |
+| Scheduler del Outbox | El EventBridge Scheduler anotado hoy dispara el barrido de Outbox; cancelaciones y pagos pendientes necesitan reglas/handlers adicionales. |
+| Inicio de Delivery Loja | Happy path de restaurantes, menú, carrito y orden; conservar transacción local mientras un backend modular lo resuelva. |
+| Evolución | Separar servicios cuando lo justifiquen escala, equipos o despliegues independientes; evitar complejidad antes de validarla. |
 
 ## Fuentes oficiales y primarias
 
