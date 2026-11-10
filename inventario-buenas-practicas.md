@@ -1,20 +1,20 @@
-# Inventario de buenas prácticas
+# Inventario general de buenas prácticas
 
-Inventario condensado de conceptos de Java, Spring Boot y patrones de arquitectura para tenerlos presentes y profundizarlos al implementarlos.
+Lista condensada para mantener presentes los temas que hemos revisado. Las guías por tecnología contienen el mapa de servicios y arquitecturas.
 
-| Bloque | Práctica o concepto | Descripción breve |
+| Bloque | Tema | Recordatorio |
 |---|---|---|
-| Java y Spring Boot | Lombok y records para DTOs | Lombok reduce código repetitivo en clases que lo necesitan. Para DTOs simples e inmutables, considerar Java `record`, que hace explícitos sus componentes y evita agregar anotaciones solo para generar accesores y métodos comunes. Elegir según requisitos de mutabilidad, herencia y serialización. |
-| Java y Spring Boot | Jakarta Validation en DTOs | Declarar restricciones de entrada con anotaciones como `@NotBlank`, `@Email` y `@Size`; activar la validación en Spring con `@Valid` o `@Validated`. Usar grupos si las reglas varían por operación. |
-| Java y Spring Boot | MapStruct para mapeos | Generar mappers en compilación para convertir entre modelos de API, aplicación, dominio y persistencia. Definir contratos de entrada y salida que expongan solo los datos necesarios y eviten devolver entidades o detalles internos al frontend. |
-| Java y Spring Boot | Inyección por constructor | Inyectar las dependencias obligatorias mediante el constructor para hacerlas explícitas y permitir componentes con referencias finales. Spring Boot admite la inyección sin `@Autowired` cuando hay un solo constructor. |
-| Java y Spring Boot | Arquitectura hexagonal por dominios | Organizar el microservicio modular por dominios de negocio. Dominio contiene reglas y puertos; Application contiene casos de uso; adaptadores conectan entradas y salidas. Controllers HTTP son adaptadores de entrada; persistencia y clientes externos son adaptadores de salida, normalmente ubicados en infraestructura. Mantener los detalles de frameworks fuera del dominio. |
-| Patrones distribuidos | Idempotencia (término por confirmar) | Permitir que una solicitud o evento se procese más de una vez sin duplicar el efecto de negocio, usando claves de operación/evento y registros persistentes. “Ir en potencia” podría referirse a idempotencia; confirmar el término antes de profundizar. |
-| Patrones distribuidos | Registro de eventos / Outbox (“logbook” por confirmar) | Registrar eventos relacionados con cambios de negocio. Si se busca guardar el cambio y el evento pendiente en una sola transacción, revisar Transactional Outbox. “Logbook” también podría significar auditoría o event log; confirmar el concepto porque son mecanismos distintos. |
-| Patrones distribuidos | Saga: orquestación y coreografía | Coordinar transacciones locales entre servicios y definir compensaciones ante fallos. Orquestación usa un workflow coordinador (por ejemplo, Temporal con Java o AWS Step Functions); coreografía distribuye el flujo entre servicios que reaccionan y publican eventos. |
-| Patrones distribuidos | Transactional Outbox | Persistir el evento pendiente junto con el cambio de negocio en la misma transacción local; un publicador lo envía después al broker con reintentos para reducir el riesgo de perder eventos. |
-| Patrones distribuidos | Compensación en procesos distribuidos | Definir acciones de negocio que contrarresten pasos ya completados cuando una Saga falla; no equivale a un rollback global y también requiere idempotencia y manejo de errores. |
+| Java / Spring Boot | Lombok y records | Lombok reduce boilerplate en clases que lo necesitan. Para DTOs simples e inmutables, considerar records por su contrato explícito y menor código generado; elegir según mutabilidad, herencia y necesidades del framework. |
+| Java / Spring Boot | Jakarta Validation | Validar la entrada en el borde HTTP con restricciones estándar y activar con @Valid o @Validated. Usar grupos solo cuando las reglas cambien según la operación. |
+| Java / Spring Boot | MapStruct | Generar mapeos explícitos entre contratos API, aplicación, dominio y persistencia; responder solo los campos requeridos y no exponer entidades ni datos internos. |
+| Java / Spring Boot | Inyección por constructor | Declarar dependencias obligatorias en el constructor; facilita componentes válidos, referencias finales y pruebas. |
+| Arquitectura | Hexagonal por dominios | Separar por dominios de negocio; Application aloja casos de uso, Domain reglas y puertos, adapters traducen entradas/salidas, Infrastructure configura tecnologías concretas. Controllers son adaptadores de entrada; JPA y clientes externos, de salida. |
+| APIs / seguridad | OAuth 2.0, OpenID Connect y JWT | OAuth 2.0 es un marco de autorización; OIDC añade autenticación e identidad; JWT es un formato de token. Un proveedor de identidad emite tokens y el backend valida firma, emisor, audiencia y vigencia. |
+| Sistemas distribuidos | Idempotencia (término por confirmar) | Reintentar una solicitud o evento no debe duplicar el efecto; usar identificadores idempotentes y estado persistente. “Ir en potencia” podría haber sido idempotencia. |
+| Sistemas distribuidos | Outbox / registro de eventos (“logbook” por confirmar) | Outbox persiste el evento pendiente junto con el cambio local y lo publica después. No equivale a auditoría ni a event sourcing; confirmar cuál era el concepto llamado “logbook”. |
+| Sistemas distribuidos | Saga | Coordinar transacciones locales con orquestación o coreografía y definir compensaciones. Aplicar cuando una operación cruza servicios con persistencia independiente. |
+| Sistemas distribuidos | Mensajería y reintentos | SQS/Service Bus son colas; SNS/EventBridge/Event Grid cubren publicación y enrutamiento con distintos modelos. Diseñar consumidores idempotentes, DLQ, backoff, alertas y recuperación. |
+| Operación | Observabilidad y costos | Medir logs, métricas, trazas, errores, latencia y gasto; configurar presupuestos y alertas. Probar carga antes de producción en un ambiente autorizado y con límites definidos. |
+| Delivery Loja | Aprender por incrementos sostenibles | Construir entregas pequeñas y funcionales; priorizar un MVP simple y sostenible, aprender el ciclo de vida completo y reservar tiempo de descanso y familia. |
 
-## Material relacionado
-
-- [Jakarta Bean Validation: restricciones y grupos](jakarta-validation-grupos.md) — guía existente con ejemplos de grupos de validación.
+Más detalle: [AWS](aws.md), [Azure](azure.md), [Frontend/TypeScript/Node](frontend-typescript-node.md) y [Arquitecturas](arquitecturas.md).
