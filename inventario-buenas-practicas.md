@@ -74,4 +74,15 @@ Recordatorio corto de los temas que hemos revisado. Cada fila resume qué hace o
 | Hosting / datos | DigitalOcean, Fly.io, Railway, Render, Heroku, Neon, Supabase y Firebase | Opciones investigadas; comparar regiones, escalado, persistencia, backups, límites, costo y dependencia antes de elegir. |
 | Proyecto | Ritmo de trabajo | Avanzar con features pequeños y reservar tiempo fuera del trabajo para familia y descanso. |
 
-Más detalle: [AWS](aws.md), [Azure](azure.md), [Frontend/TypeScript/Node](frontend-typescript-node.md) y [Arquitecturas](arquitecturas.md).
+| Bloque | Nombre | Descripción breve |
+|---|---|---|
+| QA / plataforma | Pruebas, cobertura y telemetría | Tests por riesgo, gates en CI y observabilidad como criterio de aceptación. |
+| Kubernetes | HPA, Service, Gateway API e Istio | HPA escala Pods; Service distribuye tráfico; Gateway/mesh enrutan en bordes distintos. |
+| Entrega | GitLab CI / Argo CD / Rollouts | CI valida/crea artefactos; Argo CD reconcilia Git; Rollouts ofrece canary/blue-green con métricas. |
+| Kafka | Avro, Schema Registry, Connect y Debezium | Versionar contratos y capturar cambios; definir key, compatibilidad, lag, idempotencia y DLT. |
+| Kotlin | Corrutinas | Suspender no equivale a bloquear menos por arte de magia; aplicar scope, cancelación y dispatcher correcto. |
+| Datos/pagos | Ledger, Flyway y jOOQ | Mantener historia financiera auditable, migraciones versionadas y clases generadas desde el esquema actualizado. |
+| APIs bancarias | BIAN / OpenAPI / Apigee | BIAN organiza capacidades; OpenAPI define contratos; Apigee administra políticas y publicación de APIs. |
+| Desarrollo con IA | Backlog, agent rules y gates | Trabajar una HU por vez y verificar especificación/arquitectura antes de pasar de fase. |
+
+Más detalle: [QA/escalabilidad/Kubernetes](qa-escalabilidad-kubernetes.md), [Kafka/CDC](kafka-cdc-eventos.md), [Kotlin coroutines](kotlin-coroutines.md), [Pagos/datos/APIs](pagos-datos-y-api.md), [desarrollo incremental con agentes](desarrollo-incremental-con-agentes.md), [AWS](aws.md), [Azure](azure.md), [Frontend/TypeScript/Node](frontend-typescript-node.md) y [Arquitecturas](arquitecturas.md).
