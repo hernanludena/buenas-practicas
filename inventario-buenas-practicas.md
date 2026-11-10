@@ -57,11 +57,16 @@ Recordatorio corto de los temas que hemos revisado. Cada fila resume qué hace o
 | Node / TypeScript | Drizzle ORM | ORM tipado para SQL; mantener migraciones, transacciones e índices explícitos. |
 | Node / TypeScript | Postman | Definir colecciones y ejemplos para explorar, documentar y validar contratos de APIs. |
 | Operación | CloudWatch / Azure Monitor / Sentry / Datadog | Centralizar logs, métricas, trazas, errores y alertas; incluir IDs de correlación sin registrar secretos. |
+| Operación | PostHog / analítica de producto | Medir uso de flujos con eventos mínimos, consentimiento y protección de datos personales. |
 | Operación | Costos y presupuestos | Definir presupuestos/alertas, revisar recursos activos y validar costos por región; Free Tier tiene límites y condiciones. |
 | Operación | Pruebas de carga | Hacerlas antes de producción, en ambiente autorizado, con escenarios, límites y métricas; no probar terceros sin permiso. |
 | Operación | BrowserStack | Probar compatibilidad en navegadores/dispositivos cuando los entornos locales no cubran la matriz requerida. |
-| Producto | MVP sostenible | Entregar lo mínimo que valida el flujo; evitar servicios y automatizaciones sin necesidad demostrada. |
-| Producto | Mapas y pagos | Comparar proveedor, cobertura, costo y soporte local antes de integrar checkout, geolocalización o pagos. |
-| Producto | Taxis como etapa futura | Validar interés, convenios y reglas locales antes de construir el módulo de transporte. |
+| Proyecto | MVP y entregas pequeñas | Aprender el ciclo de vida completo con incrementos funcionales; priorizar una solución mínima y sostenible. |
+| Proyecto | Meta del piloto | Referencia anotada: piloto de 2–3 meses con 10–15 restaurantes y 8–10 repartidores; validar antes de escalar. |
+| Proyecto | Aplicaciones | Alcance previsto: cliente, repartidor, comercio/restaurante y administración. |
+| Proyecto | Modelo de negocio | Delivery y mandados con logística sostenible; buscar comisiones/costos competitivos sin depender de cientos de pedidos diarios. |
+| Proyecto | Taxis | Mantener como etapa futura; validar interés, gremios, convenios, normativa y rentabilidad antes de desarrollar. |
+| Proyecto | Mapas y pagos | Comparar cobertura, costo y soporte local; confirmar proveedor y modelo de cobro antes del checkout. |
+| Proyecto | Ritmo de trabajo | Avanzar con features pequeños y reservar tiempo fuera del trabajo para familia y descanso. |
 
-Documentos por tema: [AWS](aws.md), [Azure](azure.md), [Frontend/TypeScript/Node](frontend-typescript-node.md) y [Arquitecturas](arquitecturas.md).
+Más detalle: [AWS](aws.md), [Azure](azure.md), [Frontend/TypeScript/Node](frontend-typescript-node.md) y [Arquitecturas](arquitecturas.md).
