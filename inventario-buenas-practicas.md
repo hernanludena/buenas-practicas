@@ -67,6 +67,11 @@ Recordatorio corto de los temas que hemos revisado. Cada fila resume qué hace o
 | Proyecto | Modelo de negocio | Delivery y mandados con logística sostenible; buscar comisiones/costos competitivos sin depender de cientos de pedidos diarios. |
 | Proyecto | Taxis | Mantener como etapa futura; validar interés, gremios, convenios, normativa y rentabilidad antes de desarrollar. |
 | Proyecto | Mapas y pagos | Comparar cobertura, costo y soporte local; confirmar proveedor y modelo de cobro antes del checkout. |
+| Proyecto | MapLibre/OSM, Mapbox y Google Maps | Comparar mapas, geocoding, rutas, precisión, cobertura de Loja, términos y costo por uso. |
+| Proyecto | Stripe, PayPhone y Kushki | Confirmar disponibilidad comercial en Ecuador, requisitos, comisiones, liquidación, reembolsos y webhooks. |
+| Proyecto | Correo transaccional / Resend | Evaluar entrega, reputación, límites, dominios y manejo de rebotes; no usar para spam. |
+| Hosting | Vercel, Amplify, S3/CloudFront y Cloudflare Pages | Comparar builds, SSR, HTTPS, CDN, límites, costos y control del despliegue. |
+| Hosting / datos | DigitalOcean, Fly.io, Railway, Render, Heroku, Neon, Supabase y Firebase | Opciones investigadas; comparar regiones, escalado, persistencia, backups, límites, costo y dependencia antes de elegir. |
 | Proyecto | Ritmo de trabajo | Avanzar con features pequeños y reservar tiempo fuera del trabajo para familia y descanso. |
 
 Más detalle: [AWS](aws.md), [Azure](azure.md), [Frontend/TypeScript/Node](frontend-typescript-node.md) y [Arquitecturas](arquitecturas.md).
