@@ -25,6 +25,13 @@
 | Axios / fetch | Clientes HTTP; centralizar base URL, manejo de errores y autenticación sin crear capas innecesarias. |
 | Accesibilidad / adaptable | Soportar teclado, etiquetas, contraste, mensajes legibles y tamaños móviles en los flujos principales. |
 
+| Vercel / Amplify / S3 + CloudFront | Opciones de hosting frontend; comparar SSR, CDN, certificados, builds, configuración y costo. |
+| DigitalOcean / Fly.io / Railway / Render | PaaS/hosting de apps y contenedores a evaluar frente a AWS/Azure según costo y operación. |
+| Neon / Supabase / Firebase | Servicios de datos/backend administrados con modelos distintos; verificar SQL/NoSQL, PostGIS, límites, backups y costo. |
+| MapLibre + OpenStreetMap / Mapbox / Google Maps | Evaluar cobertura local, rutas, geocoding, términos y precio antes del checkout. |
+| Stripe / PayPhone / Kushki | Validar soporte en Ecuador, tarifas, liquidación, reembolsos, conciliación y webhooks. |
+| Resend | Servicio candidato para correo transaccional; configurar dominio, rebotes y límites de envío. |
+
 | Candidato conversado | Stack |
 |---|---|
 | Frontend web/móvil | React + TypeScript + Tailwind/shadcn; evaluar Capacitor para distribución móvil. |
