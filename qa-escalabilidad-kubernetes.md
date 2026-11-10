@@ -9,7 +9,7 @@ Recordatorio de calidad, escalado, tráfico y despliegue. Separa herramientas, r
 | QA | Playwright / Selenium | Automatizar flujos UI en navegador; complementan, no reemplazan, pruebas de integración del backend. |
 | QA | Contratos API/eventos | Verificar OpenAPI, esquemas Avro y compatibilidad para detectar cambios incompatibles antes del despliegue. |
 | QA | Calidad en CI | Ejecutar compilación, pruebas, análisis estático/seguridad y cobertura como gates del merge. |
-| QA | Cobertura | Usarla como señal junto con escenarios y aserciones; aplicar umbrales según fase y módulos críticos. |
+| QA | JaCoCo y cobertura | Usar el reporte como señal junto con escenarios y aserciones; aplicar umbrales por fase y módulos críticos. |
 | QA | Escenarios de fallo | Probar timeout, duplicados, reintentos, retornos, caída de proveedor/broker y recuperación/replay. |
 | QA | Telemetría como aceptación | Acordar logs, métricas, trazas, alertas y correlación necesarias para operar cada flujo. |
 | QA | Privacidad de telemetría | No registrar secretos, tokens ni datos financieros/personales; limitar y proteger analítica de usuario. |
@@ -27,7 +27,7 @@ Recordatorio de calidad, escalado, tráfico y despliegue. Separa herramientas, r
 | Kubernetes | Cluster Autoscaler | Ajusta nodos del clúster cuando falta capacidad; HPA escala Pods. Son capas diferentes. |
 | Kubernetes | KEDA | Puede escalar workloads por métricas/eventos como longitud de cola; añadirlo solo si ese patrón se necesita. |
 | Tráfico | Ingress | Recurso de entrada HTTP(S); requiere un Ingress Controller instalado. La API Ingress está congelada, no eliminada. |
-| Tráfico | Gateway API | API de tráfico más expresiva; GatewayClass define controlador, Gateway recibe tráfico y HTTPRoute/GatewayRoute configura rutas. |
+| Tráfico | Gateway API | API de tráfico más expresiva; GatewayClass define controlador, Gateway recibe tráfico y HTTPRoute/GRPCRoute definen rutas. |
 | Tráfico | Ingress NGINX comunitario | Proyecto retirado el 24-mar-2026; no confundirlo con F5 NGINX Ingress Controller, proyecto separado. |
 | Tráfico | NGINX reverse proxy | Recibe solicitudes y las reenvía a upstreams; puede balancear tráfico, terminar TLS y aplicar caché según configuración. |
 | Tráfico | Istio / Envoy | Service mesh para políticas entre servicios, mTLS, retries y observabilidad; no reemplaza automáticamente un API Gateway. |
