@@ -1,34 +1,34 @@
-# Frontend, TypeScript y Node.js
+# Frontend, TypeScript y Node.js: recordatorio breve
 
-Inventario breve de herramientas y criterios comentados para Delivery Loja y otros proyectos.
-
-| Capa | Tecnología / tema | Para recordar |
-|---|---|---|
-| Frontend web | React | Construir interfaces por componentes; mantener componentes enfocados y separar estado de servidor, estado de interfaz y lógica de dominio. |
-| Frontend web | Angular | Alternativa completa con estructura y herramientas integradas; elegir por experiencia del equipo y necesidades del producto, no por moda. |
-| App móvil | Capacitor / Ionic | Permite empaquetar una app web para plataformas móviles y acceder a capacidades nativas mediante plugins; validar rendimiento y experiencia nativa requerida. |
-| App móvil | React Native + Expo / Flutter / Kotlin y Swift | Alternativas para app móvil; evaluar experiencia del equipo, acceso a APIs nativas, rendimiento, mantenimiento y necesidad de dos aplicaciones o una multiplataforma. |
-| Lenguaje | TypeScript | Usar tipos para hacer contratos y refactors más seguros; recordar que los tipos se eliminan en runtime y no sustituyen validación de entradas externas. |
-| Backend Node | Hono / Express / NestJS | Hono es liviano y se adapta a runtimes como Lambda; Express es minimalista y conocido; NestJS ofrece una estructura más opinada. Decidir según complejidad, runtime y convenciones del equipo. |
-| Node.js | Clases o funciones | Elegir una convención consistente. Clases pueden organizar servicios con estado/dependencias; funciones suelen ser simples para lógica pura y handlers. No convertir el uso de clases en regla universal. |
-| API / validación | DTOs y esquemas runtime | Validar payloads en runtime (por ejemplo, con una librería de esquemas) y separar contratos HTTP del modelo interno. TypeScript por sí solo no valida JSON externo. |
-| Persistencia | Drizzle ORM | ORM/consulta tipada para SQL; mantener migraciones explícitas y revisar consultas, transacciones, índices y límites de paginación. |
-| Estado frontend | TanStack Query / RTK Query | Administrar datos remotos, caché, sincronización y estados de carga/error; evitar duplicar innecesariamente el estado de servidor en el store de interfaz. |
-| Estado interfaz | Zustand / Redux | Mantener estado local/global de UI cuando se justifique. Redux aporta estructura y herramientas; Zustand ofrece una API ligera. |
-| Formularios | React Hook Form | Gestionar estado y validación de formularios; definir mensajes útiles y separar reglas de entrada de reglas de negocio del backend. |
-| Mapeo HTTP | Axios o fetch | Centralizar base URL, errores, autenticación y cancelación cuando sea útil; evitar capas redundantes que oculten el contrato HTTP. |
-| UI | Tailwind CSS / shadcn/ui | Tailwind ofrece utilidades de estilo; shadcn/ui aporta componentes cuyo código se integra al proyecto. Mantener tokens y accesibilidad del sistema de diseño. |
-| Autenticación | OAuth 2.0 / OIDC / JWT | Usar proveedor administrado cuando reduce riesgo operativo. No implementar gestión propia de contraseñas para el MVP sin una necesidad clara. Spring Security valida tokens en el backend Java. |
-| Seguridad | Secretos y permisos | Variables/configuración segura para secretos; validar autorización en el backend en cada operación. Nunca confiar en que ocultar botones en el frontend protege datos. |
-| Rendimiento | Caché y llamadas | Medir antes de optimizar; paginar listas, evitar consultas repetidas, establecer caché coherente e invalidación correcta. |
-| Pruebas / diseño | Storybook y pruebas | Storybook es opcional para desarrollar/visualizar componentes aislados; priorizar pruebas del flujo crítico, accesibilidad y comportamiento real del producto. |
-
-## Stack que dejamos como candidato
-
-| Área | Candidato discutido |
+| Nombre | Descripción breve |
 |---|---|
-| Frontend | React + TypeScript + Tailwind/shadcn; evaluar Capacitor para una primera app móvil. |
-| Backend | Node.js + TypeScript + Hono; Drizzle para PostgreSQL si se elige persistencia relacional. |
-| Estado y formularios | TanStack Query o RTK Query para estado remoto; Zustand si hace falta estado global de UI; React Hook Form para formularios. |
+| React / Angular | Alternativas web; elegir por estructura, experiencia del equipo y ecosistema requerido. |
+| Capacitor / Ionic | Empaquetan aplicaciones web para móvil; validar plugins, rendimiento y experiencia nativa requerida. |
+| React Native + Expo / Flutter / Kotlin + Swift | Opciones móviles; comparar reutilización, acceso nativo, costo de mantenimiento y requisitos de plataforma. |
+| TypeScript | Tipos estáticos ayudan al desarrollo, pero no validan en runtime datos recibidos por HTTP. |
+| Hono / Express / NestJS | Hono es liviano para runtimes como Lambda; Express minimalista; NestJS más opinado y estructurado. |
+| Clases / funciones | Convención de diseño; clases para objetos con dependencias/estado, funciones para lógica pura; evitar convertirlo en dogma. |
+| Drizzle ORM | Acceso tipado a SQL; revisar migraciones, consultas e índices. |
+| React Hook Form | Maneja formularios; validar en backend aunque también se valide en el frontend. |
+| TanStack Query / RTK Query | Datos del servidor, caché y estados remotos; no duplicar el estado sin necesidad. |
+| Zustand / Redux | Estado compartido de interfaz; agregar cuando el estado local ya no sea suficiente. |
+| Tailwind CSS / shadcn/ui | Utilidades de estilos y componentes editables dentro del proyecto; mantener accesibilidad y diseño consistente. |
+| Storybook | Catálogo/desarrollo aislado de componentes; herramienta útil, pero no obligatoria para el MVP. |
+| Nginx | Web server, reverse proxy, caché y balanceador configurable; sirve de proxy frente a APIs/servicios. |
+| ALB vs Nginx | ALB es balanceador administrado AWS; Nginx es software que requiere configuración y operación. |
+| API REST / GraphQL | REST modela recursos y endpoints; GraphQL permite pedir campos de un esquema; elegir según clientes y consultas. |
+| WebSocket / Socket.IO / AppSync Events | Canales en tiempo real; WebSocket es protocolo, Socket.IO librería con protocolo propio, AppSync Events servicio administrado pub/sub. |
+| OAuth 2.0 / OIDC / JWT | Authorization framework / capa de identidad / formato de token; validar tokens y permisos en backend. |
+| Better Auth / Cognito | Alternativas distintas de autenticación; comparar soporte, operación, seguridad, costo e integración con el stack. |
+| Postman | Colecciones y ejemplos para explorar, documentar y validar APIs; usar variables por ambiente y nunca incluir secretos compartidos. |
+| BrowserStack | Pruebas en navegadores/dispositivos diversos cuando el entorno local no cubre la matriz. |
+| Axios / fetch | Clientes HTTP; centralizar base URL, manejo de errores y autenticación sin crear capas innecesarias. |
+| Accesibilidad / adaptable | Soportar teclado, etiquetas, contraste, mensajes legibles y tamaños móviles en los flujos principales. |
 
-Son candidatos para una solución liviana, no una decisión irrevocable; comparar con el backend Java/Spring Boot cuando se defina el MVP.
+| Candidato conversado | Stack |
+|---|---|
+| Frontend web/móvil | React + TypeScript + Tailwind/shadcn; evaluar Capacitor para distribución móvil. |
+| Backend Node | Hono + TypeScript + Drizzle; PostgreSQL si el modelo relacional y consultas lo justifican. |
+| Estado/UI | TanStack Query o RTK Query para servidor; Zustand si se necesita estado global de interfaz. |
+
+Referencias: [Nginx reverse proxy](https://nginx.org/en/docs/http/ngx_http_proxy_module.html), [Nginx load balancing](https://nginx.org/en/docs/http/load_balancing.html).
