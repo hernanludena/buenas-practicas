@@ -1,5 +1,7 @@
 # AWS: certificaciones y arquitectura aplicada
 
+**Ruta de estudio Solutions Architect Associate:** [Módulo 1 — Seguridad](#aws-solutions-architect--associate--módulo-1-seguridad) · [Módulo 2 — Arquitecturas resilientes](#aws-solutions-architect--associate--módulo-2-arquitecturas-resilientes-14-noviembre-2026). Se conservan también los apuntes anteriores de otras certificaciones y Delivery Loja.
+
 Apuntes de estudio de Cloud Practitioner y Developer Associate y decisiones de arquitectura para Delivery Loja Enterprise (Java 21, Spring Boot, ECS/EC2). Fecha: noviembre de 2026. Verificar siempre la guía vigente de cada examen.
 
 ## Rutas de certificación
@@ -80,7 +82,68 @@ Orientación: reconocer el propósito de los servicios y escenarios de uso, no p
 - [Amazon Cognito](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html)
 - [Spring Security OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html)
 
-## Arquitecturas resilientes — guía de estudio (14 noviembre 2026)
+## AWS Solutions Architect – Associate | Módulo 1: Seguridad
+
+> Apuntes de preguntas y dudas recuperables de nuestras conversaciones. Se explican los conceptos; no se presentan como transcripción literal de preguntas que no están disponibles.
+
+### 1. Responsabilidad compartida e IAM
+- **Responsabilidad compartida:** AWS protege **la infraestructura de la nube** (centros de datos, hardware y servicios administrados); el cliente protege **lo que configura y ejecuta en la nube** (identidades, datos, permisos, aplicaciones, configuraciones). El reparto concreto cambia por servicio: en EC2 el cliente administra SO/parches; en Lambda AWS administra el SO subyacente.
+- **IAM:** usuarios, grupos, roles y políticas. Aplicar **mínimo privilegio**, credenciales temporales mediante roles y MFA. Una **policy** define permisos; un **role** es una identidad asumible por servicios o usuarios.
+- **Autenticación** = comprobar quién eres; **autorización** = decidir qué puedes hacer.
+- **Cognito User Pools** autentica usuarios de aplicaciones y emite tokens; **Identity Pools** permite obtener credenciales AWS temporales. No confundir con IAM para administración de recursos.
+
+### 2. Criptografía, HTTPS y TLS
+- **Cifrado en tránsito:** TLS protege la comunicación entre cliente y servidor (HTTPS). **Cifrado en reposo:** protege datos almacenados (p. ej., S3, EBS, RDS) con claves administradas según configuración.
+- **Simétrico:** una misma clave cifra y descifra; eficiente para datos. **Asimétrico:** clave pública/privada; útil para firmas e intercambio/autenticación de claves. **Hash:** función unidireccional para integridad; no es cifrado reversible.
+- **AWS KMS:** administra claves criptográficas y permisos de uso; **Secrets Manager:** almacena y puede rotar secretos; **ACM:** aprovisiona/administra certificados TLS para servicios compatibles. No son intercambiables.
+- **SSL vs TLS:** TLS es el protocolo vigente, sucesor de SSL; decir «certificado SSL» es uso coloquial, pero la conexión moderna emplea TLS.
+- **TLS termination en ALB:** cliente establece HTTPS con ALB; ALB descifra, inspecciona HTTP y puede abrir otra conexión TLS hacia backend si se configura HTTPS. Si ALB→backend va por HTTP, ese tramo no está cifrado.
+- **TLS pass-through:** el balanceador no descifra el tráfico; lo reenvía hasta backend, que termina TLS. Un NLB con listener TCP puede permitirlo; un listener TLS de NLB termina TLS. ALB, al operar a nivel HTTP, no ofrece pass-through TLS transparente.
+- **Certificado digital:** permite autenticar al servidor y respaldar el establecimiento seguro de TLS; no confundir certificado con clave simétrica de sesión.
+
+### 3. Modelo OSI y balanceadores
+| Capa OSI | Función / ejemplo |
+|---|---|
+| 7 Aplicación | HTTP, DNS; reglas de ALB basadas en host/ruta HTTP |
+| 6 Presentación | Formato/codificación; el modelo conceptual suele asociar cifrado aquí |
+| 5 Sesión | Gestión de sesiones |
+| 4 Transporte | TCP/UDP; NLB opera principalmente aquí |
+| 3 Red | IP y enrutamiento |
+| 2 Enlace de datos | Tramas, MAC |
+| 1 Física | Señales y medio físico |
+
+- **ELB** es la familia de balanceadores; **ALB** capa 7 (HTTP/HTTPS), **NLB** capa 4 (TCP/UDP/TLS). No son tres balanceadores colocados uno detrás de otro.
+- **Sticky sessions (afinidad):** dirigir solicitudes sucesivas de un usuario al mismo target, normalmente mediante cookie en ALB. Útil para estado local heredado, pero crea dependencia de instancia; preferir aplicaciones stateless y sesiones externas cuando sea posible.
+- **Health checks:** el balanceador detecta destinos no saludables y deja de elegirlos para solicitudes nuevas, sujeto a umbrales y tiempos de detección.
+- **SPOF (single point of failure):** si un componente único falla, tumba el servicio. Dos instancias en AZ distintas y un ALB multi-AZ reducen SPOF; no garantizan ausencia total de errores.
+
+### 4. Route 53, DNS y failover
+- **Orden lógico:** el cliente consulta **Route 53 como DNS** para resolver el dominio; después se conecta al endpoint devuelto, por ejemplo **ALB**. **DNS failover no es un servidor adicional entre Route 53 y ALB:** es una política de respuesta DNS de Route 53.
+- Route 53 puede devolver endpoint principal o secundario según políticas y comprobaciones de salud. El cambio puede retrasarse por **TTL y cachés DNS**.
+- **Route 53 DNS failover** decide qué endpoint anunciar; **ALB** distribuye solicitudes HTTP entre targets de su target group.
+
+### 5. Seguridad en red y aplicación
+- **Security Groups:** firewall stateful asociado a recursos; reglas allow. **Network ACLs:** reglas stateless de permitir/denegar a nivel de subred.
+- **VPC:** red virtual aislada; subred pública tiene ruta a Internet Gateway, una privada normalmente no tiene ruta directa hacia él. **NAT Gateway** permite conexiones salientes desde subred privada cuando está correctamente configurado.
+- **AWS WAF:** filtra solicitudes web HTTP(S) con reglas; **AWS Shield:** protección DDoS; **CloudTrail:** auditoría de llamadas y actividad API; **CloudWatch:** métricas, logs y alarmas.
+- **Defensa en profundidad:** HTTPS + WAF + políticas IAM mínimas + SG restrictivos + cifrado en reposo + observabilidad.
+
+### 6. Ejemplo aplicado: Delivery Loja
+Cliente móvil → consulta DNS Route 53 → HTTPS/TLS al ALB (certificado ACM, TLS termination) → ECS/EC2 Spring Boot en subredes privadas. ALB permite solo tráfico HTTPS entrante; SG de Spring Boot admite tráfico únicamente desde SG del ALB; RDS solo acepta conexiones desde SG de la aplicación. Cognito autentica usuarios y Spring Security valida JWT y autoriza acciones por rol y propiedad de pedidos. Secretos en Secrets Manager; cifrado con KMS según servicio.
+
+### Preguntas rápidas del módulo 1
+- ¿Sticky session equivale a guardar sesión en Redis? **No:** sticky dirige al mismo backend; Redis externaliza el estado.
+- ¿ALB descifra HTTPS cuando termina TLS? **Sí.** Puede volver a cifrar hacia el backend.
+- ¿TLS pass-through permite inspección HTTP en el balanceador? **No**, porque no descifra.
+- ¿Route 53 es un salto de tráfico HTTP? **No:** responde DNS.
+- ¿ALB vs NLB? **HTTP/rutas capa 7** vs **transporte capa 4**.
+- ¿Un solo balanceador autogestionado puede ser SPOF? **Sí**; usar infraestructura de balanceo redundante/administrada.
+- ¿KMS guarda contraseñas de bases de datos? **No es su función principal**; usar Secrets Manager.
+- ¿Hash equivale a cifrado? **No:** el hash no está diseñado para descifrarse.
+
+Referencias oficiales: [Responsabilidad compartida](https://aws.amazon.com/compliance/shared-responsibility-model/), [IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html), [ACM](https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html), [ALB HTTPS](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html), [NLB listeners](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-listeners.html), [Route 53 failover](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html).
+
+## AWS Solutions Architect – Associate | Módulo 2: Arquitecturas resilientes (14 noviembre 2026)
 
 ### Conceptos y diferencias
 | Concepto | Qué significa | Ejemplo AWS / matiz |
