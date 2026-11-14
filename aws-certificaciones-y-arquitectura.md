@@ -4,6 +4,24 @@
 
 Apuntes de estudio de Cloud Practitioner y Developer Associate y decisiones de arquitectura para Delivery Loja Enterprise (Java 21, Spring Boot, ECS/EC2). Fecha: noviembre de 2026. Verificar siempre la guía vigente de cada examen.
 
+## Índice de estudio
+
+- [Módulo 1 — Seguridad](#aws-solutions-architect--associate--módulo-1-seguridad)
+  - Responsabilidad compartida e IAM
+  - Criptografía, HTTPS y TLS
+  - Modelo OSI y balanceadores
+  - Route 53, DNS y failover
+  - Seguridad en red y aplicación
+  - Ejemplo Delivery Loja y preguntas de repaso
+- [Módulo 2 — Arquitecturas resilientes](#aws-solutions-architect--associate--módulo-2-arquitecturas-resilientes-14-noviembre-2026)
+  - Resiliencia, redundancia, replicación, HA, tolerancia a fallos
+  - RTO, RPO, recuperación y failover
+  - SQS, DLQ, S3, EBS, EFS, RDS, ElastiCache
+  - Ejemplo Delivery Loja y preguntas de repaso
+- [Rutas de certificación](#rutas-de-certificación)
+- [Arquitectura aplicada a Delivery Loja](#delivery-loja-enterprise-propuesta-incremental)
+- [Referencias oficiales](#referencias-oficiales)
+
 ## Rutas de certificación
 - Foundational: Cloud Practitioner, AI Practitioner.
 - Associate: Solutions Architect, Developer, CloudOps Engineer, Data Engineer, Machine Learning Engineer.
