@@ -5,6 +5,7 @@
 | Documento | Para recordar |
 |---|---|
 | [Inventario técnico](inventario-buenas-practicas.md) | Mapa condensado de Java/Spring —incluida la selección de beans—, arquitectura, mensajería, datos, frontend, operación y criterios del proyecto. |
+| [AWS: certificaciones y arquitectura](aws-certificaciones-y-arquitectura.md) | Cloud Practitioner, Developer Associate, Route 53, ALB/NLB, API Gateway, Cognito y Delivery Loja Enterprise. |
 | [AWS](aws.md) | Servicios AWS y sus responsabilidades, con aclaraciones de conceptos confundidos. |
 | [Azure](azure.md) | Servicios Azure, Durable Functions, contenedores y mensajería. |
 | [Frontend, TypeScript y Node](frontend-typescript-node.md) | Frameworks, estado, formularios, API, seguridad y runtime. |
