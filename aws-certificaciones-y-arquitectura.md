@@ -315,3 +315,24 @@ Referencias: [AWS Well-Architected Reliability](https://docs.aws.amazon.com/well
 - **Límite de recuperación:** no se dispone de una transcripción íntegra de todas las sesiones anteriores. No atribuir al usuario como pregunta literal ninguna pregunta didáctica creada para repaso.
 
 Referencias: [Cloud Practitioner](https://aws.amazon.com/certification/certified-cloud-practitioner/), [Developer Associate](https://aws.amazon.com/certification/certified-developer-associate/), [Solutions Architect Associate](https://aws.amazon.com/certification/certified-solutions-architect-associate/), [Elastic Load Balancing](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html), [API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html).
+
+
+### Continuación de dudas reales — Auto Scaling, ALB, SPOF, Health Checks y RDS Multi-AZ (14 noviembre 2026)
+
+**¿Auto Scaling se aplica a cualquier servicio o a puertos?** No. Los puertos (80, 443, 8080) transportan tráfico; no son recursos escalables. EC2 Auto Scaling ajusta instancias EC2; ECS Service Auto Scaling ajusta tareas; Application Auto Scaling soporta capacidades de servicios compatibles, como DynamoDB. Lambda ajusta concurrencia mediante su propio modelo y cuotas; Aurora Serverless tiene escalado propio. Cada servicio tiene reglas y límites diferentes.
+
+**¿Dónde se configura? ¿Hay políticas?** Sí: consola AWS, Terraform, CloudFormation, CLI o SDK. Para EC2: crear Launch Template; crear Auto Scaling Group con subredes/AZ, mínimo, deseado y máximo; asociar Target Group del ALB; definir políticas como target tracking de CPU promedio al 60 %. CloudWatch proporciona métricas. Ejemplo: mínimo 2, deseado 2, máximo 5; con CPU promedio elevada el grupo puede aumentar instancias y, al bajar la carga, reducirlas. No se garantiza que el CPU baje inmediatamente a 60 %: depende de tráfico, tiempos de arranque y configuración.
+
+**¿Qué hace ALB y qué hace ASG?** ALB distribuye nuevas solicitudes HTTP/HTTPS entre targets saludables según health checks y reglas; ASG administra cantidad/capacidad de EC2 y reemplaza instancias declaradas no saludables. ALB no crea EC2 y ASG no distribuye peticiones. Juntos favorecen disponibilidad.
+
+**¿Qué es SPOF?** Un punto único cuya caída afecta al servicio. Tres EC2 que dependen de una única base de datos sin respaldo pueden seguir teniendo SPOF en la BD. Reducir con despliegue multi-AZ, redundancia, failover, respaldos y revisión de dependencias.
+
+**¿Dónde se configuran y quién ejecuta los Health Checks?** En EC2 → Target Groups → Health checks se define protocolo, puerto, ruta, intervalos, timeout y umbrales. El ALB realiza las comprobaciones a sus targets. En EC2 → Auto Scaling Groups → Health checks se puede habilitar el uso del estado de Elastic Load Balancing para decidir reemplazos, además de las verificaciones de EC2. No basta con que ALB marque unhealthy para garantizar reemplazo por ASG si esa integración no está habilitada.
+
+**Ejemplo Spring Boot:** exponer `GET /actuator/health` mediante Spring Boot Actuator, en el puerto 8080 si ese es el puerto real de la app; configurar en Target Group HTTP, puerto de tráfico, path `/actuator/health`, intervalo 30 segundos y umbral unhealthy de 2 o 3 verificaciones. Proteger el acceso con Security Groups y asegurar respuesta HTTP 200 saludable. Si falla repetidamente, ALB evita enviar tráfico a ese target (con matices como fail-open cuando todos están unhealthy); ASG puede reemplazarlo si usa health checks del balanceador. La ruta debe existir y estar accesible desde el ALB.
+
+**¿Qué es RDS Multi-AZ?** Una opción de alta disponibilidad para bases de datos RDS. En la modalidad tradicional de instancia Multi-AZ, RDS mantiene un standby síncrono en otra AZ y realiza failover automático ante fallas compatibles. Puede haber una interrupción breve; no es una garantía de cero downtime ni un backup para borrados lógicos. Existen también implementaciones Multi-AZ DB cluster con características distintas. Read Replicas se orientan principalmente a escalar lecturas y usan replicación que puede tener retraso.
+
+**¿Cómo se relaciona con RTO/RPO?** RTO = tiempo objetivo de recuperación; RPO = pérdida de datos tolerable expresada como tiempo; SLA = compromiso formal que puede contener esos objetivos. RDS Multi-AZ reduce el tiempo de recuperación ante ciertos fallos, pero no promete un RTO universal. Backups y pruebas de restauración siguen siendo necesarios.
+
+**Resumen de aprendizaje:** ALB = enruta a destinos sanos; ASG = escala y reemplaza EC2; health check = detecta problemas; SPOF = dependencia única crítica; RDS Multi-AZ = redundancia de base de datos con failover. Diseñar y probar estos mecanismos para alcanzar RTO/RPO, no asumir que los garantizan.
