@@ -6,6 +6,8 @@ Recordatorio corto de los temas que hemos revisado. Cada fila resume qué hace o
 |---|---|---|
 | Java / Spring | Jersey vs Spring Boot | Jersey implementa JAX-RS; Spring Boot ofrece autoconfiguración y un ecosistema amplio para APIs y aplicaciones Java. |
 | Java / Spring | Inyección por constructor | Declarar dependencias obligatorias en el constructor; Spring lo recomienda y un constructor único no necesita @Autowired. |
+| Java / Spring | Varios beans para una interfaz | Spring inyecta el bean compatible; con varios candidatos, resolver con @Qualifier o marcar el predeterminado con @Primary. |
+| Java / Spring | Repositorios Spring Data | Una interfaz que extiende `JpaRepository` (u otra interfaz Spring Data) recibe una implementación proxy creada por Spring Data e inyectable como bean. |
 | Java / Spring | Lombok y records | Lombok reduce boilerplate en clases; records simplifican DTOs simples e inmutables con contrato visible. |
 | Java / Spring | DTOs y MapStruct | Mapear explícitamente modelos API, aplicación, dominio y persistencia; exponer al frontend solo los campos requeridos. |
 | Java / Spring | Jakarta Validation | Validar entradas con restricciones y @Valid/@Validated; reservar validadores de negocio para reglas de negocio. |
@@ -73,6 +75,33 @@ Recordatorio corto de los temas que hemos revisado. Cada fila resume qué hace o
 | Hosting | Vercel, Amplify, S3/CloudFront y Cloudflare Pages | Comparar builds, SSR, HTTPS, CDN, límites, costos y control del despliegue. |
 | Hosting / datos | DigitalOcean, Fly.io, Railway, Render, Heroku, Neon, Supabase y Firebase | Opciones investigadas; comparar regiones, escalado, persistencia, backups, límites, costo y dependencia antes de elegir. |
 | Proyecto | Ritmo de trabajo | Avanzar con features pequeños y reservar tiempo fuera del trabajo para familia y descanso. |
+
+### Inyección de dependencias en Spring
+
+Spring resuelve una dependencia por tipo entre los beans registrados en el contenedor. Si solo existe una implementación de una interfaz, la inyecta. Si hay varias candidatas para el mismo tipo, la inyección queda ambigua y normalmente la aplicación no inicia; Spring no busca dinámicamente una implementación en cada llamada.
+
+Se puede seleccionar una implementación con `@Qualifier`:
+
+```java
+@Service("listMerchantsService")
+class ListMerchantsService implements ListMerchantsUseCase {
+    // ...
+}
+
+@RestController
+class MerchantController {
+    private final ListMerchantsUseCase listMerchantsUseCase;
+
+    MerchantController(
+            @Qualifier("listMerchantsService") ListMerchantsUseCase listMerchantsUseCase) {
+        this.listMerchantsUseCase = listMerchantsUseCase;
+    }
+}
+```
+
+`@Primary` marca una implementación preferida cuando se inyecta ese tipo sin un calificador. Conviene que cada caso de uso tenga una interfaz específica (por ejemplo, `ListMerchantsUseCase`); `@Qualifier` sirve cuando varias implementaciones del mismo contrato son intencionales. La llamada del controlador se hace a la interfaz, pero el objeto concreto ya fue elegido e inyectado por Spring.
+
+Referencia: [Spring Framework — Fine-tuning annotation-based autowiring with @Primary or @Fallback](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired-primary.html).
 
 | Bloque | Nombre | Descripción breve |
 |---|---|---|

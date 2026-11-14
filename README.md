@@ -4,7 +4,7 @@
 
 | Documento | Para recordar |
 |---|---|
-| [Inventario técnico](inventario-buenas-practicas.md) | Mapa condensado de Java, arquitectura, mensajería, bases de datos, frontend, Node, operación y criterios del proyecto. |
+| [Inventario técnico](inventario-buenas-practicas.md) | Mapa condensado de Java/Spring —incluida la selección de beans—, arquitectura, mensajería, datos, frontend, operación y criterios del proyecto. |
 | [AWS](aws.md) | Servicios AWS y sus responsabilidades, con aclaraciones de conceptos confundidos. |
 | [Azure](azure.md) | Servicios Azure, Durable Functions, contenedores y mensajería. |
 | [Frontend, TypeScript y Node](frontend-typescript-node.md) | Frameworks, estado, formularios, API, seguridad y runtime. |
