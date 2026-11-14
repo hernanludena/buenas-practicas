@@ -18,6 +18,7 @@ Apuntes de estudio de Cloud Practitioner y Developer Associate y decisiones de a
   - RTO, RPO, recuperación y failover
   - SQS, DLQ, S3, EBS, EFS, RDS, ElastiCache
   - Ejemplo Delivery Loja y preguntas de repaso
+- [Preguntas recuperadas — Practitioner y Developer](#preguntas-recuperadas-de-conversaciones-anteriores--practitioner-y-developer)
 - [Cloud Practitioner — fundamentos y dudas](#cloud-practitioner--fundamentos-y-dudas-explicadas)
 - [Developer Associate — desarrollo y dudas](#developer-associate--desarrollo-y-dudas-explicadas)
 - [Rutas de certificación](#rutas-de-certificación)
@@ -277,3 +278,40 @@ Referencias oficiales: [Responsabilidad compartida](https://aws.amazon.com/compl
 - ¿Replicación reemplaza backup? **No:** un borrado erróneo puede propagarse.
 
 Referencias: [AWS Well-Architected Reliability](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html), [Route 53 DNS failover](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html), [SQS DLQ](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html), [S3 Replication](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication.html), [RDS Multi-AZ](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html).
+
+
+## Preguntas recuperadas de conversaciones anteriores — Practitioner y Developer
+
+> Estas preguntas corresponden a dudas efectivamente identificadas en conversaciones anteriores. Se normaliza su redacción para facilitar el estudio; no se presentan como citas textuales. Los ejemplos amplían la explicación.
+
+### Cloud Practitioner: dudas planteadas
+
+**1. ¿Cloud Practitioner y Developer Associate son la misma certificación?** No. Cloud Practitioner es de nivel Foundational y evalúa fundamentos de AWS, nube, seguridad, servicios y facturación. Developer Associate es de nivel Associate y se centra en desarrollar, desplegar, proteger y solucionar problemas de aplicaciones en AWS. **Ejemplo:** identificar qué es Lambda corresponde al nivel fundamental; implementar una función que consume SQS con reintentos e idempotencia es un caso de desarrollo.
+
+**2. ¿Qué módulos, servicios y tecnologías evalúa Cloud Practitioner?** Los dominios de CLF-C02 son conceptos de nube (24%), seguridad y cumplimiento (30%), tecnología y servicios (34%) y facturación, precios y soporte (12%). Servicios representativos: IAM, EC2, Lambda, ECS, S3, EBS, EFS, RDS, DynamoDB, VPC, Route 53, ELB, CloudFront, SQS, SNS, CloudWatch, CloudTrail, KMS y Budgets. No exige implementar cada servicio en código.
+
+**3. ¿ALB también entra en Cloud Practitioner?** Sí, dentro de los conceptos de balanceo y Elastic Load Balancing. Hay que reconocer su propósito y cuándo usarlo.
+
+**4. ¿Qué son ELB, ALB y NLB y dónde se usan?** ELB es la familia de servicios. ALB enruta HTTP/HTTPS a nivel de aplicación (capa 7), incluso por ruta como `/orders`. NLB trabaja con conexiones de transporte TCP/UDP/TLS (capa 4). **Ejemplo Delivery Loja:** ALB delante de la API REST Spring Boot; NLB sería una alternativa para un protocolo de tracking propio basado en UDP. Usar GPS no obliga por sí solo a utilizar NLB.
+
+**5. ¿Qué certificación sigue a Cloud Practitioner? ¿Existe Cloud Professional?** No hay una certificación AWS cuyo nombre sea simplemente «Cloud Professional». Existen certificaciones Professional específicas, como Solutions Architect – Professional y DevOps Engineer – Professional. Tras Practitioner puedes estudiar directamente Solutions Architect – Associate o Developer – Associate; no hay prerrequisito obligatorio.
+
+**6. ¿Para estudiar arquitectura tengo que obtener primero Developer Associate o puedo ir directamente a Solutions Architect – Associate? ¿Cuál es más compleja?** Puedes ir directamente a Solutions Architect – Associate. Esta evalúa decisiones de diseño, seguridad, resiliencia, rendimiento y costo; Developer Associate enfatiza la implementación y el ciclo de vida de aplicaciones. La dificultad relativa depende de tu experiencia; para un desarrollador Java, Developer puede resultar más familiar, pero no es un paso obligatorio.
+
+**7. ¿Cuál es el temario de Solutions Architect – Associate frente a Developer Associate?** Solutions Architect se enfoca en diseñar arquitecturas seguras, resilientes, de alto rendimiento y optimizadas en costos. Developer se enfoca en desarrollo con servicios AWS, seguridad, despliegue y resolución de problemas. Un mismo servicio, como SQS, se estudia desde la selección arquitectónica en el primero y desde el consumo, errores e idempotencia en el segundo.
+
+### Developer Associate: dudas planteadas
+
+**8. ¿Qué módulos hay en Developer Associate?** En el temario DVA-C02: desarrollo con servicios AWS (32%), seguridad (26%), despliegue (24%) y solución de problemas/optimización (18%). Verificar el código y la guía vigentes antes de programar el examen. Servicios frecuentes: Lambda, API Gateway, DynamoDB, S3, SQS, SNS, EventBridge, Step Functions, IAM, Cognito, KMS, CloudWatch y herramientas de CI/CD.
+
+**9. ¿Qué habíamos dicho sobre API Gateway?** Es una puerta de entrada administrada para APIs: define rutas, integraciones, autenticación/autorización y controles como throttling; algunas capacidades dependen del tipo de API. No es equivalente a ALB y no se necesita automáticamente por tener muchos microservicios. **Ejemplo:** socios externos de Delivery Loja consumen `POST /partner/orders` a través de API Gateway con controles de acceso y límites, mientras ALB distribuye HTTP hacia servicios ECS cuando esa combinación se justifica.
+
+**10. ¿Cuándo conviene API Gateway en vez de ALB?** API Gateway cuando necesitas características de administración y exposición de APIs, como authorizers, cuotas o planes de uso en REST APIs. ALB cuando necesitas distribuir solicitudes HTTP/HTTPS a múltiples servicios/instancias y enrutar por host o path. Ambos pueden coexistir; evaluar costos y complejidad.
+
+### Mapa de lo documentado y lo pendiente
+
+- **Confirmado como pregunta recuperada:** los diez temas anteriores (algunos agrupan varias preguntas relacionadas).
+- **Ya explicado en otras secciones:** IAM, KMS, Cognito, ACM, TLS, cifrado, Route 53, sticky sessions, SQS, DLQ, Multi-AZ, RTO/RPO, backups, redundancia y replicación.
+- **Límite de recuperación:** no se dispone de una transcripción íntegra de todas las sesiones anteriores. No atribuir al usuario como pregunta literal ninguna pregunta didáctica creada para repaso.
+
+Referencias: [Cloud Practitioner](https://aws.amazon.com/certification/certified-cloud-practitioner/), [Developer Associate](https://aws.amazon.com/certification/certified-developer-associate/), [Solutions Architect Associate](https://aws.amazon.com/certification/certified-solutions-architect-associate/), [Elastic Load Balancing](https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html), [API Gateway](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html).
