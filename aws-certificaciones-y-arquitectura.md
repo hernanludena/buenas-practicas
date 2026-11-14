@@ -18,6 +18,8 @@ Apuntes de estudio de Cloud Practitioner y Developer Associate y decisiones de a
   - RTO, RPO, recuperación y failover
   - SQS, DLQ, S3, EBS, EFS, RDS, ElastiCache
   - Ejemplo Delivery Loja y preguntas de repaso
+- [Cloud Practitioner — fundamentos y dudas](#cloud-practitioner--fundamentos-y-dudas-explicadas)
+- [Developer Associate — desarrollo y dudas](#developer-associate--desarrollo-y-dudas-explicadas)
 - [Rutas de certificación](#rutas-de-certificación)
 - [Arquitectura aplicada a Delivery Loja](#delivery-loja-enterprise-propuesta-incremental)
 - [Referencias oficiales](#referencias-oficiales)
@@ -50,6 +52,47 @@ Orientación: reconocer el propósito de los servicios y escenarios de uso, no p
 | Troubleshooting y optimización | 18% | CloudWatch, X-Ray, logs, reintentos, idempotencia, rendimiento |
 
 **Versiones:** porcentajes anteriores son de DVA-C02; revisar la guía de DVA-C03 si corresponde al examen elegido.
+
+## Guía de repaso — Cloud Practitioner y Developer Associate
+
+> Consolidación de conceptos discutidos y aplicados en Delivery Loja. Estas son preguntas de repaso redactadas para estudiar, **no** transcripciones literales de conversaciones anteriores. El temario y los códigos de examen deben contrastarse con las guías oficiales vigentes.
+
+### Cloud Practitioner — fundamentos y dudas explicadas
+| Pregunta | Respuesta y explicación |
+|---|---|
+| ¿Qué es AWS y qué es cloud computing? | AWS ofrece servicios de cómputo, almacenamiento, redes y datos bajo demanda. La nube permite aprovisionar recursos sin comprar y administrar todo el hardware físico. |
+| ¿IaaS, PaaS y serverless son iguales? | No. IaaS ofrece infraestructura virtual (EC2); servicios administrados abstraen más operación (RDS); Lambda ejecuta funciones sin administrar servidores, pero conserva responsabilidades de configuración y seguridad. |
+| ¿Región y Availability Zone son lo mismo? | No. Una región contiene varias AZ aisladas; desplegar en dos AZ protege frente a la caída de una zona, no necesariamente de toda la región. |
+| ¿Alta disponibilidad y tolerancia a fallos son iguales? | No. HA minimiza interrupciones; tolerancia a fallos busca continuidad ante fallas definidas sin interrupción perceptible. |
+| ¿Elasticidad y escalabilidad? | Escalabilidad es capacidad de crecer; elasticidad es ajustar capacidad dinámicamente según demanda. |
+| ¿Quién protege los datos? | Responsabilidad compartida: AWS protege infraestructura de nube; el cliente administra permisos, clasificación, configuración y uso de datos según servicio. |
+| ¿EC2, Lambda y ECS? | EC2 es servidor virtual; Lambda ejecuta funciones por eventos; ECS orquesta contenedores y puede ejecutarlos sobre EC2 o Fargate. |
+| ¿S3, EBS y EFS? | S3 objetos; EBS bloques/disco para EC2; EFS sistema de archivos compartido NFS. |
+| ¿CloudWatch y CloudTrail? | CloudWatch observa métricas/logs/alarmas; CloudTrail registra actividad y llamadas API para auditoría. |
+| ¿Cómo se controla el gasto? | Budgets para alertas, Cost Explorer para analizar costos; revisar recursos activos, tarifas y cuotas del Free Tier. |
+| ¿Qué significa RTO y RPO? | RTO es objetivo de tiempo de recuperación; RPO es máximo período de datos que se tolera perder. |
+| ¿Qué hace Route 53? | Resuelve DNS; con failover puede cambiar el endpoint anunciado, pero no balancea cada petición HTTP como ALB. |
+
+### Developer Associate — desarrollo y dudas explicadas
+| Pregunta | Respuesta y explicación |
+|---|---|
+| ¿API Gateway y ALB son iguales? | No. API Gateway gestiona publicación/controles de APIs; ALB enruta y balancea tráfico HTTP. Pueden usarse por separado o combinados según requisitos. |
+| ¿Cuándo elegir Lambda? | Para tareas event-driven y APIs con cargas compatibles con límites y costos; no por obligación de usar serverless. |
+| ¿SQS, SNS y EventBridge? | SQS desacopla trabajo en cola; SNS publica a múltiples suscriptores; EventBridge enruta eventos por reglas. |
+| ¿Quién procesa un mensaje SQS? | El consumidor/worker, no la cola. El worker confirma éxito eliminando el mensaje; reintentos pueden duplicar entregas. |
+| ¿Standard o FIFO? | Standard prioriza escala sin orden garantizado y entrega al menos una vez; FIFO mantiene orden por grupo y deduplicación dentro de sus garantías. Diseñar consumidores idempotentes. |
+| ¿Para qué sirve una DLQ? | Retiene mensajes que fallaron repetidamente; no los corrige ni los reprocesa sola. |
+| ¿Qué es idempotencia? | Repetir la misma operación no debe causar efectos adicionales, fundamental en reintentos de pagos/pedidos. |
+| ¿Qué hace Cognito y qué hace Spring Security? | Cognito puede autenticar y emitir tokens; Spring Security valida tokens y aplica autorización en el backend. |
+| ¿KMS, Secrets Manager y ACM? | KMS administra claves; Secrets Manager secretos; ACM certificados TLS. |
+| ¿Qué es Outbox? | Persistir cambio de negocio y evento en una misma transacción de base de datos y publicarlo después mediante worker/CDC para evitar inconsistencias. |
+| ¿Qué es DynamoDB Streams? | Flujo de cambios de ítems de DynamoDB; permite reaccionar a modificaciones sin hacer polling completo. |
+| ¿Qué hace Step Functions? | Orquesta workflows con pasos, reintentos y decisiones; distinto de una cola SQS. |
+| ¿Cómo desplegar contenedores? | GitHub Actions o CI construye imagen → ECR almacena imagen → ECS despliega servicio en EC2/Fargate. |
+| ¿Cómo depurar errores? | Logs/métricas/alarmas con CloudWatch, trazas cuando corresponda, DLQ y correlación por request/order ID. |
+
+### Ejemplo integrado de estudio: Delivery Loja
+App móvil → Route 53 (DNS) → ALB HTTPS → ECS/EC2 Spring Boot → RDS PostgreSQL. Cognito autentica; Spring Security autoriza. Para procesos asíncronos, API → SQS → worker idempotente → DLQ para fallos persistentes. S3 almacena imágenes, CloudWatch observa el sistema, y Secrets Manager/KMS ayudan a proteger secretos y datos. Esta arquitectura combina fundamentos de Cloud Practitioner, desarrollo de Developer Associate y resiliencia de Solutions Architect.
 
 ## Route 53, ELB, ALB y NLB
 - Route 53 resuelve DNS hacia el endpoint (ALB o API Gateway); no es un salto HTTP en cada solicitud. DNS failover puede cambiar respuestas DNS según health checks y políticas, sujeto a cachés/TTL.
