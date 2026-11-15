@@ -233,6 +233,12 @@ Cliente → Route 53 (DNS + Failover) → ALB → Backend (Spring Boot)
 
 **Explicación:** La criptografía asimétrica utiliza claves públicas y privadas. RSA puede utilizarse para cifrado y firmas digitales. Diffie-Hellman permite establecer un secreto compartido entre participantes y, aunque pertenece a la criptografía asimétrica, no cifra mensajes directamente.
 
+ACM + ALB: HTTPS para los clientes.
+RDS: cifrado en reposo habilitado, base de datos privada y conexión TLS.
+IAM Roles: permisos mínimos para cada servicio.
+Secrets Manager: credenciales de base de datos fuera del código.
+Security Groups: permitir únicamente las conexiones necesarias.
+
 ### 12 / 88 · Autenticación y autorización
 
 **Pregunta:** \_\_\_\_\_ es la forma de asegurar que solo los usuarios con permisos puedan acceder a una red. Mientras que \_\_\_\_\_ permite acceder a recursos necesarios, como bases de datos o archivos específicos.
@@ -244,6 +250,25 @@ Cliente → Route 53 (DNS + Failover) → ALB → Backend (Spring Boot)
 **Respuesta correcta:** A. Autenticación y autorización
 
 **Explicación:** La autenticación verifica la identidad del usuario: quién es. La autorización determina qué recursos y operaciones puede utilizar. Por ejemplo, Spring Security puede autenticar mediante JWT y después evaluar roles o permisos para acceder a un endpoint.
+
+Authentication (Autenticación)
+¿Quién eres?
+Verifica identidad.
+Ejemplos: contraseña, OAuth2/OIDC, JWT válido.
+Token inválido → HTTP 401.
+
+Authorization (Autorización)
+¿Qué puedes hacer?
+Verifica roles y permisos.
+Ejemplo: ROLE_ADMIN.
+Sin permisos → HTTP 403.
+
+Spring Security
+AuthenticationManager: coordina autenticación.
+AuthenticationProvider: valida credenciales o tokens.
+JwtDecoder: valida JWT.
+@PreAuthorize: restringe métodos.
+SecurityContextHolder: contexto de seguridad.
 
 ### 13 / 88 · MFA
 
@@ -257,6 +282,19 @@ Cliente → Route 53 (DNS + Failover) → ALB → Backend (Spring Boot)
 **Respuesta correcta:** D. Autenticación multifactor (MFA)
 
 **Explicación:** MFA añade un factor independiente al inicio de sesión, como una llave de seguridad o aplicación de autenticación. Así, aunque alguien robe una contraseña, necesitaría superar una verificación adicional. Las contraseñas fuertes siguen siendo importantes, pero no representan por sí solas un segundo factor.
+
+Cognito permite configurar MFA como obligatorio, opcional o desactivado, y admite factores adicionales como SMS, correo electrónico y códigos TOTP generados por aplicaciones autenticadoras.
+El flujo habitual sería:
+React → Cognito (contraseña + MFA) → JWT → Spring Security → API
+
+Para aplicaciones bancarias, conviene priorizar métodos resistentes al phishing, como FIDO2/WebAuthn. Los códigos SMS y TOTP proporcionan seguridad adicional, pero no son resistentes al phishing.
+
+FIDO2: estándar moderno para autenticación resistente al phishing.
+WebAuthn: API del navegador que utiliza claves criptográficas para autenticar usuarios.
+CTAP2: protocolo para comunicarse con autenticadores externos.
+Passkey: credencial que permite iniciar sesión sin contraseña.
+
+
 
 ### 14 / 88 · Sistema de gestión de seguridad
 
@@ -300,6 +338,17 @@ Un estafador crea una cuenta de correo electrónico prácticamente idéntica a l
 
 **Explicación:** POST envía información al servidor para su procesamiento y puede utilizarse para crear recursos, como una nueva orden. PATCH se usa para actualizaciones parciales y PUT para reemplazar la representación de un recurso. POST no es idempotente por defecto.
 
+IDEMPOTENCIA
+Una operación ejecutada varias veces tiene el mismo efecto previsto que ejecutarla una sola vez.
+Puedes implementar una Idempotency Key
+
+Ejemplo financiero:
+POST /payments + Idempotency-Key
+
+Permite proteger contra pagos duplicados si el backend implementa correctamente la deduplicación.
+
+✅ Entrevista: POST no es idempotente por defecto; PUT y DELETE sí. PATCH puede serlo dependiendo de su implementación.
+
 ### 17 / 88 · Seguridad de contraseñas
 
 **Pregunta:** ¿Cuáles de estas cosas NO debes hacer al crear un sistema de autenticación?
@@ -313,18 +362,51 @@ Un estafador crea una cuenta de correo electrónico prácticamente idéntica a l
 
 **Explicación:** Almacenar contraseñas sin protección permite que cualquier persona con acceso a la base de datos pueda leerlas. La práctica recomendada es almacenar hashes seguros con sal, utilizando algoritmos como Argon2id o bcrypt, en lugar de guardar contraseñas originales.
 
+bcrypt y Argon2id son algoritmos que protegen las contraseñas convirtiéndolas en un hash, es decir, un valor que no se puede revertir directamente para recuperar la contraseña original.
+Salt (sal) es un valor aleatorio que se añade a una contraseña antes de generar su hash con bcrypt o Argon2id. Su objetivo es que dos usuarios con la misma contraseña tengan hashes diferentes.
+
 ### 18 / 88 · Server-Side Rendering
 
 **Pregunta:** ¿Necesitas implementar renderizado del lado del servidor (SSR) en React? ¿Cuál de las siguientes bibliotecas lo hace de forma predeterminada?
 
-- **A.** Expresar
-- **B.** ReactuarHidratar
-- **C.** Próximo
+- **A.** Express
+- **B.** React Hydrate
+- **C.** Next
 - **D.** Redux
 
-**Respuesta correcta:** C. Próximo
+**Respuesta correcta:** C. Next
 
 **Explicación:** La respuesta se refiere a Next.js, un framework de React que permite renderizar contenido en el servidor. Esto puede mejorar el tiempo de visualización inicial y facilitar el SEO. Next.js también admite generación estática y renderizado en el cliente; no todas las rutas utilizan SSR obligatoriamente.
+
+¿Qué es SSR (Server-Side Rendering)?
+Es cuando el servidor genera HTML antes de enviarlo al navegador.
+React con CSR:
+Navegador → Descarga JavaScript → Ejecuta React → Muestra contenido
+Next.js con SSR:
+Navegador → Servidor Next.js → Genera HTML → Muestra contenido
+Esto puede mejorar la visualización inicial y facilitar la indexación en buscadores.
+
+Next.js es un framework de React para desarrollar aplicaciones web.
+
+Características:
+SSR: Server-Side Rendering.
+SSG: Static Site Generation.
+CSR: Client-Side Rendering.
+
+Routing basado en archivos.
+Server Components.
+Mejoras de SEO y rendimiento inicial según la estrategia de renderizado.
+
+Diferencia:
+React → librería de interfaces.
+Next.js → framework basado en React.
+SSR: genera HTML en el servidor.
+CSR: genera la interfaz en el navegador.
+SSG: genera HTML previamente, durante la compilación.
+
+✅ Entrevista: SSR mejora potencialmente la carga visual inicial y el SEO porque entrega HTML prerenderizado desde el servidor.
+✅ Entrevista: Next.js no es el único framework SSR. Angular, Nuxt, SvelteKit, React Router y Astro también lo soportan.
+
 
 ### 19 / 88 · Caché
 
@@ -339,6 +421,34 @@ Un estafador crea una cuenta de correo electrónico prácticamente idéntica a l
 
 **Explicación:** La caché almacena temporalmente información para evitar procesar o consultar repetidamente los mismos datos. Esto mejora el tiempo de respuesta, reduce carga sobre los servidores y puede aumentar la disponibilidad del contenido cuando el origen no responde, dependiendo de la arquitectura.
 
+📚 CACHE – CACHÉ
+Definición: Almacenamiento temporal de datos para acelerar su recuperación.
+Beneficios:
+Reduce latencia.
+Mejora rendimiento.
+Disminuye carga de servidores y BD.
+Facilita escalabilidad.
+
+Puede mejorar disponibilidad en ciertas arquitecturas.
+
+Conceptos:
+Cache Hit → dato encontrado en caché.
+Cache Miss → dato no encontrado.
+TTL → tiempo de vida del dato.
+Cache Invalidation → eliminar o actualizar datos obsoletos.
+Cache-Aside → consultar caché primero y BD si no existe.
+
+Java / Spring Boot:
+@Cacheable → almacena y reutiliza resultados.
+@CacheEvict → elimina entradas.
+@CachePut → actualiza caché.
+Redis → caché distribuida.
+
+AWS:
+ElastiCache → Redis OSS o Valkey administrado.
+CloudFront → caché CDN.
+
+
 ### 20 / 88 · WebSockets
 
 **Pregunta:** ¿Cuál de las siguientes es una URL de WebSockets con el formato correcto?
@@ -351,6 +461,19 @@ Un estafador crea una cuenta de correo electrónico prácticamente idéntica a l
 **Respuesta correcta:** A. ws\://devsu.com/v1/sockets
 
 **Explicación:** WebSocket utiliza los esquemas `ws://` y `wss://` para establecer conexiones bidireccionales persistentes. `ws://` no utiliza TLS, mientras que `wss://` permite comunicación cifrada, recomendable para producción. Los otros esquemas no representan URLs WebSocket estándar.
+
+wss:// es el equivalente seguro de ws://, de forma similar a la relación entre HTTPS y HTTP.
+
+Un Application Load Balancer (ALB) admite WebSocket mediante HTTP/HTTPS Upgrade.
+El flujo puede ser:
+React → WSS → ALB → Spring Boot WebSocket
+El ALB puede terminar TLS y establecer la conexión WebSocket hacia el backend. Una vez actualizada la conexión, permanece asociada al backend seleccionado mientras siga abierta.
+
+Protocolos:
+ws:// → WebSocket sin TLS.
+wss:// → WebSocket cifrado con TLS.
+http:// → HTTP sin TLS.
+https:// → HTTP cifrado con TLS.
 
 ### 21 / 88 · APIs del navegador
 
@@ -385,7 +508,7 @@ Un estafador crea una cuenta de correo electrónico prácticamente idéntica a l
 - **A.** Una aplicación generada estáticamente
 - **B.** Aplicación renderizada del lado del cliente
 - **C.** Una aplicación entregada a través de CDN
-- **D.** Aplicación renderizada en el servidor
+- **D.** Aplicación renderizada en el servidor - SSR
 
 Respuesta correcta propuesta: D. Aplicación renderizada en el servidor
 
@@ -404,6 +527,34 @@ Respuesta correcta propuesta: D. Aplicación renderizada en el servidor
 
 **Explicación:** Code Splitting divide el código JavaScript y otros recursos en archivos más pequeños llamados chunks. Así, una aplicación puede cargar únicamente el código necesario para una ruta o funcionalidad, reduciendo el tamaño de la descarga inicial. Lazy loading complementa esta técnica al cargar esos recursos cuando se necesitan.
 
+📚 **CODE SPLITTING Y LAZY LOADING**
+
+**Code Splitting:** técnica que divide JavaScript en archivos más pequeños llamados chunks.
+
+**Lazy Loading:** carga esos chunks solamente cuando se necesitan.
+
+**Eager Loading:** carga los recursos inmediatamente.
+
+**React:**
+- React.lazy() → carga dinámica de componentes.
+- import() → importación dinámica.
+- Suspense → muestra un fallback mientras carga.
+
+**Beneficios:**
+- Reduce el JavaScript inicial.
+- Mejora potencialmente el rendimiento.
+- Evita descargar funcionalidades innecesarias.
+- Permite cargar módulos por ruta.
+
+**Ejemplo:**
+Una aplicación de restaurantes no necesita descargar el módulo de administración desde el inicio.
+
+**Entrevista:**
+Code Splitting = dividir código.
+Lazy Loading = cargar bajo demanda.
+
+✅ Respuesta correcta: A. División de código.
+
 ### 25 / 88 · Patrón Observer
 
 **Pregunta:** El patrón \_\_\_\_\_ se utiliza para que un objeto pueda notificar a un número ilimitado de otros objetos.
@@ -416,6 +567,27 @@ Respuesta correcta propuesta: D. Aplicación renderizada en el servidor
 **Respuesta correcta:** D. Observador
 
 **Explicación:** El patrón Observer permite que un objeto, llamado sujeto, mantenga múltiples observadores suscritos y les notifique cuando ocurra un cambio. Es útil para sistemas basados en eventos, interfaces reactivas y mecanismos de publicación y suscripción.
+
+#Observer vs Pub/Sub vs Kafka
+Esta diferencia es importante para entrevistas de arquitectura.
+Concepto	Cómo funciona
+Observer	Un sujeto notifica directamente a sus observadores, normalmente dentro de la misma aplicación.
+Pub/Sub	Los publicadores envían eventos a un intermediario que los distribuye a suscriptores.
+Kafka	Plataforma distribuida de eventos que permite almacenar y consumir eventos mediante topics.
+Por ejemplo:
+- Observer: notificaciones internas dentro de un proceso Java.
+- Spring Events: mecanismo de publicación y escucha de eventos dentro de Spring.
+- Kafka: comunicación asíncrona entre microservicios.
+Kafka comparte la idea de desacoplar productores y consumidores, pero no es exactamente el patrón Observer clásico.
+
+Patron Observer: generalmente se utiliza para notificaciones entre objetos dentro de una misma aplicación. No está limitado conceptualmente a ese ámbito.
+Kafka: implementa principalmente el patrón Publish/Subscribe (Pub/Sub) y permite construir una Event-Driven Architecture (EDA), es decir, una arquitectura orientada a eventos
+
+Patrones relacionados:
+EDA → Event-Driven Architecture.
+Event Streaming → flujo persistente de eventos.
+Choreography → coordinación mediante eventos.
+Transactional Outbox → publicación fiable de eventos junto con cambios de BD.
 
 ### 26 / 88 · HATEOAS
 
@@ -455,6 +627,8 @@ Respuesta correcta propuesta: D. Aplicación renderizada en el servidor
 **Respuesta correcta:** B. Acoplamiento de contenido
 
 **Explicación:** El acoplamiento de contenido ocurre cuando un módulo accede directamente a los detalles internos de otro módulo o modifica sus datos. Esto rompe el encapsulamiento y provoca que un cambio interno pueda afectar a otros componentes. Es uno de los tipos de acoplamiento más perjudiciales.
+
+Content Coupling es uno de los tipos de acoplamiento más perjudiciales porque un módulo depende directamente de la implementación interna de otro.
 
 ### 29 / 88 · SOLID y POO
 
