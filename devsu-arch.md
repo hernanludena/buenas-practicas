@@ -679,6 +679,8 @@ Content Coupling es uno de los tipos de acoplamiento más perjudiciales porque u
 
 **Explicación:** Amazon EventBridge es un servicio administrado que permite recibir, filtrar y distribuir eventos entre aplicaciones y servicios AWS. Por ejemplo, un evento de creación de una orden puede activar procesos de notificación o logística sin acoplar directamente al productor con los consumidores.
 
+¿Cuál elegir? Para integrar Lambda, SQS y otros servicios AWS mediante eventos, EventBridge suele ser más sencillo. Para una plataforma de microservicios Spring Boot con procesamiento continuo, retención y consumo independiente, Kafka/MSK puede ser más apropiado.
+
 ### 33 / 88 · Arquitectura basada en eventos
 
 **Pregunta:** ¿Qué debemos tener en cuenta para implementar una arquitectura basada en eventos?
@@ -755,6 +757,14 @@ Respuestas técnicamente correctas: A y C.
 
 **Explicación:** La opción A representa comunicación síncrona mediante HTTP o gRPC, donde un servicio consume el endpoint de otro. La opción C representa comunicación asíncrona mediante mensajería, como RabbitMQ o Amazon SQS. Ambas son válidas según las necesidades de la arquitectura. La opción B es incorrecta porque un microservicio no debería modificar directamente los datos privados de otro.
 
+Regla de entrevista:
+Cola de trabajos AWS → SQS.
+Mensajería con routing → RabbitMQ.
+JMS empresarial → ActiveMQ.
+RabbitMQ/ActiveMQ en AWS → Amazon MQ.
+Kafka en AWS → Amazon MSK.
+Patrones: Point-to-Point, Pub/Sub, Event Streaming y Event-Driven Architecture.
+
 ### 39 / 88 · Fork-Join
 
 **Pregunta:** Existe un conjunto de patrones para ejecutar algoritmos paralelos. De las siguientes características, indique cuál pertenece al conocido patrón Fork-Join.
@@ -766,6 +776,11 @@ Respuestas técnicamente correctas: A y C.
 **Respuesta correcta:** A. Genera dos ejecuciones concurrentes que comienzan después de que se llama al proceso principal. Luego se utiliza una instrucción para unirse a la instrucción de la que se separó.
 
 **Explicación:** Fork-Join divide un trabajo en varias tareas que pueden ejecutarse en paralelo (fork) y posteriormente sincroniza sus resultados (join). En Java existe el framework `ForkJoinPool`, útil para algoritmos recursivos que pueden dividirse en subtareas independientes.
+
+Fases:
+Fork → dividir o iniciar subtareas.
+Execute → procesarlas concurrentemente.
+Join → esperar y combinar resultados.
 
 ## Infraestructura en la nube — Preguntas 40 a 51
 
@@ -873,6 +888,34 @@ Respuestas técnicamente correctas: A y C.
 
 **Explicación:** PaaS permite desarrollar, desplegar y administrar aplicaciones utilizando una plataforma que el proveedor mantiene. El desarrollador se concentra en su aplicación sin administrar directamente servidores, sistema operativo o runtime subyacente. Ejemplos incluyen Azure App Service y Google App Engine.
 
+☁️ **ELASTIC BEANSTALK vs LAMBDA vs FARGATE**
+
+**Elastic Beanstalk – PaaS**
+- Despliegas aplicación Java/Spring Boot.
+- AWS administra el entorno.
+- Puede utilizar EC2, ALB y Auto Scaling.
+- No elimina todas las responsabilidades operativas.
+
+**AWS Lambda – FaaS**
+- Despliegas funciones.
+- Ejecución bajo demanda.
+- Escalado administrado.
+- Ideal para procesamiento de eventos.
+
+**AWS Fargate – Serverless Containers**
+- Despliegas contenedores Docker.
+- Se utiliza con ECS o EKS.
+- No administras servidores EC2.
+- Configuras tareas/pods, CPU, memoria, red y escalado.
+
+**Comparación:**
+- Beanstalk → aplicación.
+- Lambda → función.
+- Fargate → contenedor.
+- ECS/EKS → orquestación.
+
+**Entrevista:** Fargate no es un orquestador; es el motor de cómputo serverless que puede utilizar ECS o EKS.
+
 ### 48 / 88 · Resiliencia
 
 **Pregunta:** ¿Qué definición describe mejor el concepto de resiliencia en los sistemas en la nube?
@@ -925,6 +968,18 @@ Respuestas técnicamente correctas: A y C.
 
 **Explicación:** NTP (Network Time Protocol) sincroniza los relojes de dispositivos conectados a una red utilizando referencias horarias y estimaciones del retardo. Esto permite mantener horas consistentes entre servidores, algo importante para correlacionar logs, analizar eventos y diagnosticar problemas distribuidos.
 
+**NTP en Linux y AWS**
+
+- NTP = protocolo de sincronización horaria.
+- chrony = software que implementa NTP.
+- chronyd = servicio Linux que sincroniza el reloj.
+- cron = programador de tareas (no es NTP).
+
+**En AWS:**
+Amazon Time Sync Service → chronyd (EC2) → reloj Linux → microservicios Spring Boot.
+
+**Importante:** NTP se ejecuta mediante un servicio en segundo plano, no mediante una tarea cron.
+
 ## Arquitecto de Soluciones — Preguntas 52 a 64
 
 ### 52 / 88 · CQRS
@@ -939,6 +994,28 @@ Respuestas técnicamente correctas: A y C.
 **Respuesta correcta:** C. Puede generar inconsistencia eventual entre las bases de datos de lectura y escritura
 
 **Explicación:** CQRS separa las operaciones de escritura (Commands) de las operaciones de lectura (Queries). Cuando los modelos de lectura se actualizan mediante eventos asíncronos, puede existir un intervalo en el que los datos de lectura todavía no reflejen la última escritura. Esto se conoce como consistencia eventual. CQRS no obliga a utilizar bases de datos separadas.
+
+📚 **CQRS — ¿Para qué sirve?**
+
+Separa operaciones de lectura (Query) y escritura (Command).
+
+**Útil cuando:**
+- Hay muchas lecturas y pocas escrituras.
+- Las consultas requieren optimización especial.
+- Las reglas de escritura son complejas.
+- Necesitas escalar lecturas y escrituras independientemente.
+
+**Ejemplo Delivery:**
+10.000 consultas/s vs. 100 escrituras/s.
+
+**Alternativas más simples:**
+Índices SQL, Redis Cache y réplicas de lectura.
+
+**CQRS ligero:** Commands y Queries separados, misma BD.
+
+**CQRS avanzado:** modelos y almacenamiento independientes, con posible consistencia eventual.
+
+💡 **Regla:** CQRS se justifica por necesidades diferentes de lectura y escritura, no solamente por tener muchas consultas.
 
 ### 53 / 88 · Circuit Breaker
 
@@ -992,7 +1069,7 @@ Respuestas técnicamente correctas: A y C.
 
 **Explicación:** Serverless permite pagar principalmente por las ejecuciones y los recursos consumidos, evitando mantener servidores activos durante periodos sin solicitudes. Es especialmente conveniente para procesos ocasionales, como tareas programadas o procesamiento de eventos. No siempre es la alternativa más económica para cargas constantes.
 
-### 57 / 88 · Sharding en NoSQL
+### 57 / 88 · Sharding en NoSQL / Shard-fragmento
 
 **Pregunta:** ¿Qué técnica se recomienda para minimizar la latencia en consultas en una base de datos NoSQL altamente distribuida?
 
@@ -1018,7 +1095,7 @@ Respuestas técnicamente correctas: A y C.
 
 **Explicación:** Algunas bases NoSQL priorizan escalabilidad y disponibilidad, por lo que las transacciones complejas entre múltiples registros pueden resultar más difíciles o costosas que en bases relacionales. Sin embargo, no es una limitación universal: varias bases NoSQL modernas ofrecen transacciones ACID y consistencia fuerte.
 
-### 59 / 88 · Event Sourcing
+### 59 / 88 · Event Sourcing / Event Store
 
 **Pregunta:** En una arquitectura orientada a eventos, ¿qué ventaja ofrece Event Sourcing sobre un modelo tradicional de base de datos?
 
@@ -1030,6 +1107,12 @@ Respuestas técnicamente correctas: A y C.
 **Respuesta correcta:** D. Permite reconstrucción de estados pasados y auditoría completa
 
 **Explicación:** Event Sourcing almacena los cambios del sistema como una secuencia de eventos en lugar de guardar únicamente el estado actual. Al reproducir esos eventos se puede reconstruir cómo evolucionó una entidad. Esto facilita auditorías, trazabilidad y recuperación de estados anteriores.
+
+Event Store vs. Kafka vs. Outbox
+- Event Store: almacena eventos para reconstruir estados (Event Sourcing).
+- Kafka: distribuye eventos entre servicios.
+- Outbox: asegura el registro transaccional de eventos pendientes de publicar.
+- CQRS: separa lecturas y escrituras.
 
 ### 60 / 88 · Gestión de secretos
 
